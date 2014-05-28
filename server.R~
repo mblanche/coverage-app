@@ -1,0 +1,43 @@
+library(shiny)
+
+source("helpers.R")
+
+shinyServer(function(input, output, session) {
+
+    experiments <- reactive({input$exps})
+    cntl <- reactive({input$cntl})
+    gene <- reactive({input$geneID})
+    tx <- reactive({ input$txID})
+    
+    ## Render experiment selector
+    output$expSelector <- renderUI({
+        exps <- getExperiments()
+        checkboxGroupInput("exps", "Choose Experiments", exps, selected=exps)
+    })
+    
+    ## Render control selector
+    output$controlSelector <- renderUI({
+        exps <- experiments()
+            radioButtons("cntl",
+                         "Choose the control (will appear at the bottom of the stack)",
+                         exps,
+                         selected=exps[length(exps)])
+        })
+    
+    updateSelectizeInput(session, 'geneID', choices = data, server = TRUE)
+        
+    ## Render Transcript selector
+    output$txSelector <- renderUI({
+        if (!gene() == ''){
+            txs <- getTx(gene())
+            radioButtons("txID",label="Select a transcript:",choice=txs,selected=txs[1])
+        }
+    })
+    
+    output$plot <- renderPlot({
+        if (!is.null(tx())){
+            print(plotCovs(tx(),experiments(),cntl() ))
+        }
+    })
+    
+})
