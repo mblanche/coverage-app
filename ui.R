@@ -1,28 +1,26 @@
+library(shinyIncubator)
 library(shiny)
 
 ## ui.R
 shinyUI(fluidPage(
+    progressInit(),
     titlePanel("coverageVis"),
     sidebarLayout(
         
         sidebarPanel(
             helpText(h5("Display coverages plot for your favorite gene")),
 
-            uiOutput("experimentSelector"),
             uiOutput("samplesSelector"),
             uiOutput("controlSelector"),
-
-            selectizeInput('geneID',label="Type or select your genes:",c("Genes"="")),
-
+            uiOutput("geneSelector"),
             uiOutput("txSelector")
-            ## uiOutput("geneInput"),
-            
+                        
         ),
         
         mainPanel(
             plotOutput('plot'),
+            uiOutput('button'),
             textOutput('text1')
-            ## textOutput('text2')
             )
         )
     ))
